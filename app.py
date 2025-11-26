@@ -12,6 +12,51 @@ st.title('米国・日本株価可視化アプリ')
 st.sidebar.header("設定")
 ticker = st.sidebar.text_input('ティッカーシンボルを入力', 'AAPL')
 
+# --- 【Day 7 追加】企業情報の取得と表示 ---
+st.sidebar.markdown("---") # 区切り線
+st.sidebar.write("### 企業情報")
+
+try:
+    # yf.Ticker() は「特定の銘柄の全情報」を持つ辞書箱を作ります
+    stock = yf.Ticker(ticker)
+    
+    # info という引き出しの中に、PERなどの情報が入っています
+    info = stock.info
+    
+    # 辞書から情報を取り出して表示
+    # .get('キー', 'なし') は、「もしデータがなかったら『-』と表示して」という安全策です
+    
+    # 1. 会社名 (長いので省略されることもあります)
+    st.sidebar.info(info.get('longName', ticker))
+    
+    # 2. セクター（業種）
+    st.sidebar.write(f"**セクター:** {info.get('sector', '-')}")
+    
+    # 3. PER (株価収益率)
+    per = info.get('trailingPE', '-')
+    st.sidebar.write(f"**PER:** {per}")
+    
+    # 4. PBR (株価純資産倍率)
+    pbr = info.get('priceToBook', '-')
+    st.sidebar.write(f"**PBR:** {pbr}")
+    
+    # 5. 配当利回り (dividendYield は 0.05 みたいな小数で来るので % に直します)
+    div_yield = info.get('dividendYield', 0)
+    if div_yield is not None:
+        st.sidebar.write(f"**配当利回り:** {div_yield * 100:.2f}%")
+    else:
+        st.sidebar.write("**配当利回り:** -")
+
+    # 6. 時価総額 (Market Cap)
+    mkt_cap = info.get('marketCap', 0)
+    # 兆単位などで見やすくフォーマット
+    st.sidebar.write(f"**時価総額:** ${mkt_cap:,.0f}")
+
+except Exception as e:
+    st.sidebar.error("企業情報が取得できませんでした")
+
+# ----------------------------------------
+
 st.write(f'### {ticker} の株価分析')
 
 try:
