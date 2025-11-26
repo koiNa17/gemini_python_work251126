@@ -6,7 +6,7 @@ import plotly.graph_objects as go
 # ページ設定
 st.set_page_config(page_title="株価ダッシュボード", layout="wide")
 
-st.title('米国・日本株価可視化アプリ')
+st.title('金融市場ダッシュボード')
 
 # サイドバー設定
 st.sidebar.header("設定")
